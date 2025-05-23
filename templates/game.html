@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% block title %}Dinosaur Shooting Game{% endblock %}
+{% block content %}
+<style>
+    #game-canvas {
+        display: block;
+        margin: 2rem auto;
+        border: 2px solid #1a1a1a;
+        border-radius: 0.5rem;
+        background-color: #e0e0e0;
+        cursor: crosshair;
+    }
+    .game-info {
+        text-align: center;
+        font-size: 1.1rem;
+        color: #333;
+        margin-bottom: 1rem;
+    }
+    .game-message {
+        text-align: center;
+        font-size: 1.2rem;
+        color: #d32f2f;
+        margin-top: 1rem;
+    }
+</style>
+<div class="text-center">
+    <h2 class="text-2xl font-bold mb-4">Dinosaur Shooting Game</h2>
+    <div class="game-info">
+        Score: <span id="score">0</span> | Time: <span id="timer">30</span>s
+    </div>
+    <canvas id="game-canvas" width="800" height="400" class="max-w-full"></canvas>
+    <p class="text-lg">Click the dinosaur to shoot!</p>
+    <div id="game-message" class="game-message"></div>
+</div>
+<script>
+    // Redirect if Online
+    function checkInternet() {
+        if (navigator.onLine) {
+            window.location.href = '/';
+        }
+    }
+    checkInternet();
+    window.addEventListener('online', checkInternet);
+
+    // Game Logic
+    const canvas = document.getElementById('game-canvas');
+    const ctx = canvas.getContext('2d');
+    const scoreDisplay = document.getElementById('score');
+    const timerDisplay = document.getElementById('timer');
+
+    let score = 0;
+    let timer = 30;
+    let dino = { x: 0, y: 0, width: 50, height: 50, visible: false };
+    let gameActive = true;
+
+    // Load Dinosaur Image
+    const dinoImage = new Image();
+    dinoImage.src = '/static/dino.jpg';
+
+    // Random Position
+    function spawnDino() {
+        if (gameActive) {
+            dino.x = Math.random() * (canvas.width - dino.width);
+            dino.y = Math.random() * (canvas.height - dino.height);
+            dino.visible = true;
+        }
+    }
+
+    // Move Dinosaur Every Second
+    setInterval(() => {
+        if (gameActive) {
+            spawnDino();
+        }
+    }, 1000);
+
+    // Timer
+    setInterval(() => {
+        if (gameActive && timer > 0) {
+            timer--;
+            timerDisplay.textContent = timer;
+            if (timer === 0) {
+                dino.visible = false;
+                spawnDino();
+            }
+        }
+    }, 1000);
+
+    // Initial Spawn
+    spawnDino();
+
+    // Shooting Logic
+    canvas.addEventListener('click', (e) => {
+        if (!gameActive) return;
+        const rect = canvas.getBoundingClientRect();
+        const clickX = e.clientX - rect.left;
+        const clickY = e.clientY - rect.top;
+
+        if (dino.visible &&
+            clickX >= dino.x && clickX <= dino.x + dino.width &&
+            clickY >= dino.y && clickY <= dino.y + dino.height) {
+            score += 10;
+            scoreDisplay.textContent = score;
+            dino.visible = false;
+            spawnDino();
+        }
+    });
+
+    // Render
+    function update() {
+        checkInternet(); // Check internet each frame
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        if (dino.visible && dinoImage.complete) {
+            ctx.drawImage(dinoImage, dino.x, dino.y, dino.width, dino.height);
+        }
+        requestAnimationFrame(update);
+    }
+    update();
+</script>
+{% endblock %}

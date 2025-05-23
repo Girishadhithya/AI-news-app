@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}{{ article.fields.headline }}{% endblock %}
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    {# Display the article headline #}
+    <h1 class="text-4xl font-bold text-blue-900 mb-4">{{ article.fields.headline }}</h1>
+
+    {# Check if a thumbnail image URL is available from the Guardian API. #}
+    {# If present, display it prominently at the top of the article. #}
+    {% if article.fields.thumbnail %}
+        <img src="{{ article.fields.thumbnail }}" alt="{{ article.fields.headline }}" class="w-full h-auto object-cover rounded mb-6">
+    {% endif %}
+
+    {# Display the main body content of the article. #}
+    {# The 'safe' filter is CRUCIAL here. It tells Jinja2 not to escape #}
+    {# HTML tags within the 'body' string. This allows the browser to render #}
+    {# formatting (paragraphs, bold, etc.) and any embedded images or videos #}
+    {# that are part of the original article's HTML content. #}
+    <div class="prose max-w-none">
+        {{ article.fields.body | safe }}
+    </div>
+
+    {# Provide a link back to the original Guardian article on their website #}
+    <a href="{{ article.webUrl }}" target="_blank" class="btn inline-block mt-8 bg-blue-500 text-white px-6 py-3 rounded hover:bg-blue-600">View Original on Guardian</a>
+</div>
+{% endblock %}

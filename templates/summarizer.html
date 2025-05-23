@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}The Colorful Times - Summarizer{% endblock %}
+{% block content %}
+<h2 class="text-3xl font-bold text-blue-800 mb-6">News Summarizer</h2>
+<div class="bg-purple-200 p-6 rounded-lg shadow-lg">
+    <form id="summarizer-form" class="space-y-4">
+        <label for="incident" class="block text-lg font-medium text-gray-700">Enter Incident to Summarize</label>
+        <input type="text" name="incident" id="incident" class="w-full p-3 border rounded-lg focus:ring-orange-400 focus:border-orange-400" placeholder="e.g., Recent election results">
+        <button type="submit" class="btn bg-orange-400 text-white px-6 py-3 rounded-lg btn-orange">Summarize</button>
+    </form>
+    <div id="summary" class="mt-6 hidden">
+        <h3 class="text-xl font-semibold text-blue-600">Summary</h3>
+        <p id="summary-text" class="text-gray-600"></p>
+    </div>
+</div>
+<script>
+    const API_KEY = "90102d1e-71df-4588-be30-8eb861265c06";
+    document.getElementById('summarizer-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const incident = document.getElementById('incident').value.trim();
+        const summaryDiv = document.getElementById('summary');
+        const summaryText = document.getElementById('summary-text');
+        if (!incident) {
+            summaryText.textContent = 'Please provide an incident to summarize.';
+            summaryDiv.classList.remove('hidden');
+            return;
+        }
+        try {
+            const response = await fetch(`https://content.guardianapis.com/search?q=${encodeURIComponent(incident)}&api-key=${API_KEY}&show-fields=bodyText&page-size=1`);
+            const data = await response.json();
+            const articles = data.response.results;
+            if (articles.length === 0) {
+                summaryText.textContent = 'No relevant news found for the incident.';
+                summaryDiv.classList.remove('hidden');
+                return;
+            }
+            const articleText = articles[0].fields.bodyText;
+            if (articleText.length < 200) {
+                summaryText.textContent = 'Article too short to summarize.';
+                summaryDiv.classList.remove('hidden');
+                return;
+            }
+            // Mock summary (Hugging Face API requires server-side or CORS)
+            summaryText.textContent = `Summary of ${incident}: ${articleText.substring(0, 200)}... (Mock summary due to client-side limitations)`;
+            summaryDiv.classList.remove('hidden');
+        } catch (error) {
+            console.error('Error fetching news:', error);
+            summaryText.textContent = 'Error fetching news for summarization.';
+            summaryDiv.classList.remove('hidden');
+        }
+    });
+</script>
+{% endblock %}

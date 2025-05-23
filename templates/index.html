@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}The Colorful Times - Home{% endblock %}
+
+{% block content %}
+<div class="text-center">
+    <h2 class="text-4xl font-bold text-blue-800 mb-6">Welcome to The Colorful Times</h2>
+    <p class="text-lg text-gray-700 mb-8">Your vibrant source for the latest news and insights!</p>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <a href="/trending" class="bg-blue-200 text-gray-800 p-6 rounded-lg hover:bg-blue-300 article-card">
+            <h3 class="text-2xl font-semibold">Trending News</h3>
+            <p>Stay updated with the hottest stories.</p>
+        </a>
+        <a href="/sports" class="bg-green-200 text-gray-800 p-6 rounded-lg hover:bg-green-300 article-card">
+            <h3 class="text-2xl font-semibold">Sports</h3>
+            <p>Get the latest sports updates.</p>
+        </a>
+        <a href="/politics" class="bg-pink-200 text-gray-800 p-6 rounded-lg hover:bg-pink-300 article-card">
+            <h3 class="text-2xl font-semibold">Politics</h3>
+            <p>Follow political developments.</p>
+        </a>
+        <a href="/summarizer" class="bg-purple-200 text-gray-800 p-6 rounded-lg hover:bg-purple-300 article-card">
+            <h3 class="text-2xl font-semibold">News Summarizer</h3>
+            <p>Summarize any incident instantly.</p>
+        </a>
+    </div>
+</div>
+{% endblock %}
+
